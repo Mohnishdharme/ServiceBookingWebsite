@@ -1,5 +1,7 @@
 package com.mdcorporation.serviceBookingSystem.entity;
 
+import java.time.LocalDateTime;
+
 import com.mdcorporation.serviceBookingSystem.dto.UserDTO;
 import com.mdcorporation.serviceBookingSystem.enums.UserRole;
 
@@ -30,6 +32,35 @@ public class User {
 	
 	private String phone;
 	
+	private boolean emailVerified;
+    private String verificationToken;
+    private LocalDateTime tokenExpiryDate;
+	
+	public boolean isEmailVerified() {
+		return emailVerified;
+	}
+
+	public void setEmailVerified(boolean emailVerified) {
+		this.emailVerified = emailVerified;
+	}
+
+	public String getVerificationToken() {
+		return verificationToken;
+	}
+
+	public void setVerificationToken(String verificationToken) {
+		this.verificationToken = verificationToken;
+	}
+
+	public LocalDateTime getTokenExpiryDate() {
+		return tokenExpiryDate;
+	}
+
+	public void setTokenExpiryDate(LocalDateTime tokenExpiryDate) {
+		this.tokenExpiryDate = tokenExpiryDate;
+	}
+
+
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
 	
@@ -94,7 +125,8 @@ public class User {
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", email=" + email + ", password=" + password + ", name=" + name + ", lastname="
-				+ lastname + ", phone=" + phone + ", role=" + role + "]";
+				+ lastname + ", phone=" + phone + ", emailVerified=" + emailVerified + ", verificationToken="
+				+ verificationToken + ", tokenExpiryDate=" + tokenExpiryDate + ", role=" + role + "]";
 	}
 	
 	

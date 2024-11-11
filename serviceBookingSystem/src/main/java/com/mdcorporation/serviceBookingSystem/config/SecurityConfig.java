@@ -13,6 +13,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -36,21 +37,28 @@ public class SecurityConfig {
 	private JwtFilter jwtFilter;
 	
 	//adding security filter to the apllication
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-	    
-	    return http.csrf(csrf -> csrf.disable())
-	               .cors()  // Add CORS support
-	               .and()
-	               .authorizeHttpRequests(auth -> auth
-	                   .requestMatchers("/authenticate", "/client/signup").permitAll()
-	                   .requestMatchers("/api/**").authenticated()
-	               )
-	               .httpBasic(Customizer.withDefaults())
-	               .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-	               .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-	               .build();
-	}
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(Customizer.withDefaults()) // Enable CORS if needed
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                    "/authenticate",
+                    "/client/signup",
+                    "company/signup",
+                    "/api/verify-email",
+                    "/verify**" // Allow all variants of /verify with query params
+                ).permitAll()
+                .requestMatchers("/api/**").authenticated()
+            )
+            .httpBasic(Customizer.withDefaults())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
 
 
 	

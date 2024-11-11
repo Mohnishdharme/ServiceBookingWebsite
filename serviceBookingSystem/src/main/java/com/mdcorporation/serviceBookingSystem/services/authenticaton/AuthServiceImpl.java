@@ -29,8 +29,20 @@ public class AuthServiceImpl implements AuthService{
 	@Autowired
 	private UserRepositery userRepositery;
 	
-	public UserDTO signupClient(SignupRequestDTO signupRequestDTO) {
-		User user = new User();
+	@Autowired
+    private EmailVerificationImpl emailVerificationService;
+
+
+    public void registerUser(String email) {
+        User user = new User();
+        user.setEmail(email);
+        user.setEmailVerified(false);
+        userRepositery.save(user);
+        emailVerificationService.sendVerificationEmail(user);
+    }
+	
+	public UserDTO signupClient(User user,SignupRequestDTO signupRequestDTO) {
+		
 		user.setName(signupRequestDTO.getName());
 		user.setLastname(signupRequestDTO.getLastname());
 		user.setEmail(signupRequestDTO.getEmail());
@@ -44,13 +56,12 @@ public class AuthServiceImpl implements AuthService{
 	}
 	
 	
-	public UserDTO signupCompany(SignupRequestDTO signupDto) {
-		User user = new User();
-		user.setName(signupDto.getName());
-		user.setLastname(signupDto.getLastname());
-		user.setEmail(signupDto.getEmail());
-		user.setPhone(signupDto.getPhone());
-		user.setPassword(signupDto.getPassword());
+	public UserDTO signupCompany(User user, SignupRequestDTO signupRequestDTO) {
+		user.setName(signupRequestDTO.getName());
+		user.setLastname(signupRequestDTO.getLastname());
+		user.setEmail(signupRequestDTO.getEmail());
+		user.setPhone(signupRequestDTO.getPhone());
+		user.setPassword(signupRequestDTO.getPassword());
 		user.setPassword(encoder.encode(user.getPassword()));
 		user.setRole(UserRole.COMPANY);
 		
