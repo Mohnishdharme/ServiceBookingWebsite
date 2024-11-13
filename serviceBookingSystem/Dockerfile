@@ -2,24 +2,33 @@
 FROM maven:3.8.5-openjdk-17 AS build
 
 # Set the working directory
-WORKDIR /build
+WORKDIR /app
+
+# Debug: List contents before copy
+RUN pwd && ls -la
 
 # Copy the entire project
 COPY . .
 
+# Debug: List contents after copy
+RUN pwd && ls -la
+
+# Verify pom.xml exists and show its contents
+RUN if [ -f "pom.xml" ]; then cat pom.xml; else echo "pom.xml not found"; exit 1; fi
+
 # Build the application
-RUN mvn clean package -DskipTests
+RUN mvn clean package -DskipTests -X
 
 # Stage 2: Create the runtime image
 FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-# Copy the built artifact from build stage
-COPY --from=build /build/target/serviceBookingSystem-0.0.1-SNAPSHOT.jar app.jar
+# Copy the built JAR file from the build stage
+COPY --from=build /app/target/*.jar app.jar
 
-# Expose port
+# Expose the port your application runs on
 EXPOSE 8080
 
-# Run the application
+# Set the startup command
 ENTRYPOINT ["java", "-jar", "app.jar"]
