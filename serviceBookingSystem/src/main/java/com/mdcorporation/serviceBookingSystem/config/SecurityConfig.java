@@ -88,7 +88,7 @@ public class SecurityConfig {
 		@Bean
 		public CorsConfigurationSource corsConfigurationSource() {
 		    CorsConfiguration configuration = new CorsConfiguration();
-		    configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200")); // Your Angular frontend URL
+		    configuration.setAllowedOrigins(Arrays.asList("https://service-booking-website-front-end.vercel.app/")); // Your Angular frontend URL
 		    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
 		    configuration.setExposedHeaders(Arrays.asList("Authorization"));
