@@ -1,17 +1,17 @@
-# Stage 1: Build the application with Maven
 FROM maven:3.8.5-openjdk-17 AS build
+COPY . .
 
-# Set the working directory to the project folder containing pom.xml
-WORKDIR /app/serviceBookingSystem
-
-# Copy the pom.xml from the serviceBookingSystem directory to the container's working directory
-COPY serviceBookingSystem/pom.xml .
-
-# Download dependencies to cache them in a separate layer
-RUN mvn dependency:go-offline -B
-
-# Copy the entire project directory to the container's working directory
-COPY serviceBookingSystem/ .
-
-# Build the application with a specified goal
+# Build the application and skip tests
 RUN mvn clean package -DskipTests
+
+# Stage 2: Run the application
+FROM openjdk:17-jdk-slim
+
+# Copy the jar file from the 'build' stage
+COPY --from=build /target/serviceBookingSystem-0.0.1.SNAPSHOT.jar serviceBookingSystem.jar
+
+# Expose the port your application runs on (optional, replace with actual port if needed)
+EXPOSE 8080
+
+# Run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
