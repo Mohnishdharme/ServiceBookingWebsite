@@ -13,5 +13,5 @@ RUN mvn dependency:go-offline -B
 # Copy the entire project directory to the container's working directory
 COPY serviceBookingSystem/ .
 
-# Run Maven build with debug output
-RUN mvn clean package -DskipTests -X
+# Build the application with a specified goal
+RUN mvn clean package -DskipTests
